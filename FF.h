@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <string>
 
 namespace FF {
 

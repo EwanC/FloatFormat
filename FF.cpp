@@ -165,7 +165,8 @@ std::ostream &operator<<(std::ostream &os, const FI<T> &fi) {
      << "\n";
 
   if (std::is_same<T, hex_half>::value) {
-    const float printer = convertHalfToFloat(fi.hex_val.hex);
+    using FloatType = typename NativeFloat<T>::NativeType;
+    const FloatType printer = Converter<T>::HexToFloat(fi.hex_val.hex);
     return dumpFloat(os, printer);
   } else {
     return dumpFloat(os, fi.hex_val.f);
@@ -179,13 +180,14 @@ typename NativeFloat<T>::NativeType parseString(const std::string &&str) {
       (str.size() > 2) && (str.compare(0, 2, "0x") == 0) &&
       (str.find_first_not_of("0123456789abcdefABCDEF", 2) == std::string::npos);
 
-  typename NativeFloat<T>::NativeType native;
+  using FloatType = typename NativeFloat<T>::NativeType;
+  FloatType native;
   if (isHex) {
-    const T hex_value = std::strtoul(str.c_str(), 0, 16);
+    const T hex_value = static_cast<T>(std::strtoul(str.c_str(), 0, 16));
     native = Converter<T>::HexToFloat(hex_value);
   } else {
     try {
-      native = std::stod(str);
+      native = static_cast<FloatType>(std::stod(str));
     } catch (std::invalid_argument) {
       std::cerr << "Invalid argument: " << str << "\n";
       return -1;
@@ -199,7 +201,7 @@ void printAll(const double x) {
   FF::FloatInfo<FF::hex_double> double_info(x);
   std::cout << double_info << "\n\n";
 
-  const float downcast = x;
+  const float downcast = static_cast<float>(x);
   FF::FloatInfo<FF::hex_single> single_info(downcast);
   std::cout << single_info << "\n\n";
 

@@ -6,27 +6,32 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   message(FATAL_ERROR "Compiler not tested yet")
-
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   # using GCC
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
      message(FATAL_ERROR "Compiler not supported")
   endif()
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wall -Wextra -Werror")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   message(FATAL_ERROR "Compiler not tested yet")
+ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+ if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19) # 2017
+   message(FATAL_ERROR "Compiler not supported")
+ endif()
+ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "/Wall /WX")
 else ()
-  message(FATAL_ERROR "Unknown Compiler")
+ message(FATAL_ERROR "Unknown Compiler")
 endif()
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wall -Wextra -Werror")
 add_library(FloatFormat SHARED FF.cpp)
 set_target_properties(FloatFormat PROPERTIES VERSION 1.0 SOVERSION 1)
 
-add_executable(ff driver.cpp FF.cpp)
+add_executable(ff driver.cpp)
 target_link_libraries(ff FloatFormat)
 
 add_subdirectory(test)
 
 install(TARGETS ff RUNTIME DESTINATION bin)
-install(TARGETS FloatFormat LIBRARY DESTINATION lib)
+install(TARGETS FloatFormat
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
 install(FILES FF.h DESTINATION include)
