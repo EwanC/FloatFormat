@@ -1,0 +1,27 @@
+language: cpp
+dist: xenial
+
+addons:
+  sources:
+     - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main'
+       key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+  packages:
+    llvm-10-tools
+
+compilers:
+  - gcc
+  - clang
+
+install:
+  pip install lit --user --upgrade pip
+
+script:
+  - ls /usr/bin/
+  - ls -R /usr/lib/llvm-*
+  - mkdir build
+  - cd build
+  - mkdir install
+  - cmake ../ -DCMAKE_INSTALL_PREFIX=./install
+  - make install
+  - cd ..
+  - lit build/test

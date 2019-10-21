@@ -5,6 +5,8 @@ Supports half, single, and double precision float point numbers.
 
 Author: Ewan Crawford <ewan.cr@gmail.com>
 
+[![Build Status](https://travis-ci.org/EwanC/FloatFormat.svg)](https://travis-ci.org/EwanC/FloatFormat) master
+
 ## Usage
 
 ```console
