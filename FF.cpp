@@ -7,7 +7,8 @@
 #include <type_traits>
 
 namespace {
-template <typename U, typename T> inline U bitcast(const T in) {
+template <typename U, typename T>
+inline U bitcast(const T in) {
   static_assert(sizeof(T) == sizeof(U), "Sizes must match");
   static_assert(std::is_trivially_copyable<T>::value,
                 "Source type not trivially copyable");
@@ -19,7 +20,8 @@ template <typename U, typename T> inline U bitcast(const T in) {
   return out;
 }
 
-template <typename T> inline std::ostream &dumpFloat(std::ostream &os, T f) {
+template <typename T>
+inline std::ostream& dumpFloat(std::ostream& os, T f) {
   os << "Float: " << std::defaultfloat << f;
   os << ", " << std::hexfloat << f;
   os << ", " << std::scientific << f;
@@ -45,61 +47,93 @@ float convertHalfToFloat(FF::hex_half half) {
   return bitcast<float>(single_bits);
 }
 
-template <typename T> struct Converter final {
+template <typename T>
+struct Converter final {
   using F = typename FF::NativeFloat<T>::NativeType;
-  static F HexToFloat(T x) { return bitcast<F>(x); }
+  static F HexToFloat(T x) {
+    return bitcast<F>(x);
+  }
 };
 
-template <> struct Converter<FF::hex_half> final {
-  static float HexToFloat(FF::hex_half x) { return convertHalfToFloat(x); }
+template <>
+struct Converter<FF::hex_half> final {
+  static float HexToFloat(FF::hex_half x) {
+    return convertHalfToFloat(x);
+  }
 };
-} // namespace anonymous
+}  // namespace anonymous
 
 namespace FF {
-template <class T> using FI = FloatInfo<T>;
+template <class T>
+using FI = FloatInfo<T>;
 
 // Half precision
-template <> const unsigned FI<hex_half>::mantissa_bits = 10;
-template <> const unsigned FI<hex_half>::exponent_bits = 5;
-template <> const unsigned FI<hex_half>::sign_shift = 15;
-template <> const uint16_t FI<hex_half>::mantissa_mask = 0x3FF;
-template <> const uint16_t FI<hex_half>::exponent_mask = 0x7C00;
-template <> const uint16_t FI<hex_half>::sign_mask = 0x8000;
-template <> const int FI<hex_half>::exp_bias = -15;
+template <>
+const unsigned FI<hex_half>::mantissa_bits = 10;
+template <>
+const unsigned FI<hex_half>::exponent_bits = 5;
+template <>
+const unsigned FI<hex_half>::sign_shift = 15;
+template <>
+const uint16_t FI<hex_half>::mantissa_mask = 0x3FF;
+template <>
+const uint16_t FI<hex_half>::exponent_mask = 0x7C00;
+template <>
+const uint16_t FI<hex_half>::sign_mask = 0x8000;
+template <>
+const int FI<hex_half>::exp_bias = -15;
 
 // Single precision
-template <> const unsigned FI<hex_single>::mantissa_bits = 23;
-template <> const unsigned FI<hex_single>::exponent_bits = 8;
-template <> const unsigned FI<hex_single>::sign_shift = 31;
-template <> const uint32_t FI<hex_single>::mantissa_mask = 0x007fffff;
-template <> const uint32_t FI<hex_single>::exponent_mask = 0x7f800000;
-template <> const uint32_t FI<hex_single>::sign_mask = 0x80000000;
-template <> const int FI<hex_single>::exp_bias = -127;
+template <>
+const unsigned FI<hex_single>::mantissa_bits = 23;
+template <>
+const unsigned FI<hex_single>::exponent_bits = 8;
+template <>
+const unsigned FI<hex_single>::sign_shift = 31;
+template <>
+const uint32_t FI<hex_single>::mantissa_mask = 0x007fffff;
+template <>
+const uint32_t FI<hex_single>::exponent_mask = 0x7f800000;
+template <>
+const uint32_t FI<hex_single>::sign_mask = 0x80000000;
+template <>
+const int FI<hex_single>::exp_bias = -127;
 
 // Double precision
-template <> const unsigned FI<hex_double>::mantissa_bits = 52;
-template <> const unsigned FI<hex_double>::exponent_bits = 11;
-template <> const unsigned FI<hex_double>::sign_shift = 63;
-template <> const uint64_t FI<hex_double>::mantissa_mask = 0xfffffffffffff;
-template <> const uint64_t FI<hex_double>::exponent_mask = 0x7ff0000000000000;
-template <> const uint64_t FI<hex_double>::sign_mask = 0x8000000000000000;
-template <> const int FI<hex_double>::exp_bias = -1023;
+template <>
+const unsigned FI<hex_double>::mantissa_bits = 52;
+template <>
+const unsigned FI<hex_double>::exponent_bits = 11;
+template <>
+const unsigned FI<hex_double>::sign_shift = 63;
+template <>
+const uint64_t FI<hex_double>::mantissa_mask = 0xfffffffffffff;
+template <>
+const uint64_t FI<hex_double>::exponent_mask = 0x7ff0000000000000;
+template <>
+const uint64_t FI<hex_double>::sign_mask = 0x8000000000000000;
+template <>
+const int FI<hex_double>::exp_bias = -1023;
 
-template <class T> bool FloatInfo<T>::isDenorm() const {
+template <class T>
+bool FloatInfo<T>::isDenorm() const {
   return (0 == (hex_val.hex & FI<T>::exponent_mask)) &&
          (hex_val.hex & FI<T>::mantissa_mask);
 }
 
-template <class T> bool FloatInfo<T>::isInf() const {
+template <class T>
+bool FloatInfo<T>::isInf() const {
   return (hex_val.hex & ~FI<T>::sign_mask) == FI<T>::exp_mask;
 }
 
-template <class T> bool FloatInfo<T>::isNan() const {
+template <class T>
+bool FloatInfo<T>::isNan() const {
   return (hex_val.hex & FI<T>::mantissa_mask) &&
          (hex_val.hex & FI<T>::exp_mask == FI<T>::exp_mask);
 }
 
-template <> FloatInfo<hex_half>::FloatInfo(float single_precision) {
+template <>
+FloatInfo<hex_half>::FloatInfo(float single_precision) {
   if (std::isinf(single_precision)) {
     hex_val.hex = FI<hex_half>::exponent_mask;
   } else if (std::isnan(single_precision)) {
@@ -113,7 +147,7 @@ template <> FloatInfo<hex_half>::FloatInfo(float single_precision) {
       // 2^-24
       hex_val.hex = 0;
     } else {
-      uint32_t single_bits = *reinterpret_cast<uint32_t *>(&single_abs);
+      uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
       uint32_t exponent_bits = (single_bits & FI<hex_single>::exponent_mask) >>
                                FI<hex_single>::mantissa_bits;
       exponent_bits += FI<hex_single>::exp_bias;
@@ -136,7 +170,7 @@ template <> FloatInfo<hex_half>::FloatInfo(float single_precision) {
 }
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const FI<T> &fi) {
+std::ostream& operator<<(std::ostream& os, const FI<T>& fi) {
   static_assert(std::is_same<T, hex_double>::value ||
                     std::is_same<T, hex_single>::value ||
                     std::is_same<T, hex_half>::value,
@@ -160,9 +194,8 @@ std::ostream &operator<<(std::ostream &os, const FI<T> &fi) {
 
   os << "Bits: ";
   os << std::bitset<1>(fi.getSignBits()) << " ";
-  os << std::bitset<FI<hex_double>::exponent_bits>(fi.getExponentBits()) << " ";
-  os << std::bitset<FI<hex_double>::mantissa_bits>(fi.getMantissaBits())
-     << "\n";
+  os << std::bitset<FI<T>::exponent_bits>(fi.getExponentBits()) << " ";
+  os << std::bitset<FI<T>::mantissa_bits>(fi.getMantissaBits()) << "\n";
 
   if (std::is_same<T, hex_half>::value) {
     using FloatType = typename NativeFloat<T>::NativeType;
@@ -174,7 +207,7 @@ std::ostream &operator<<(std::ostream &os, const FI<T> &fi) {
 }
 
 template <typename T>
-typename NativeFloat<T>::NativeType parseString(const std::string &&str) {
+typename NativeFloat<T>::NativeType parseString(const std::string&& str) {
   // Check for 0x hex digits
   const bool isHex =
       (str.size() > 2) && (str.compare(0, 2, "0x") == 0) &&
@@ -209,18 +242,18 @@ void printAll(const double x) {
   std::cout << half_info << "\n";
 }
 
-void parseHalf(const char *str) {
+void parseHalf(const char* str) {
   FF::NativeFloat<uint16_t>::NativeType native = FF::parseString<uint16_t>(str);
   FF::printAll(native);
 }
 
-void parseSingle(const char *str) {
+void parseSingle(const char* str) {
   FF::NativeFloat<uint32_t>::NativeType native = FF::parseString<uint32_t>(str);
   FF::printAll(native);
 }
 
-void parseDouble(const char *str) {
+void parseDouble(const char* str) {
   FF::NativeFloat<uint64_t>::NativeType native = FF::parseString<uint64_t>(str);
   FF::printAll(native);
 }
-} // namespace FF
+}  // namespace FF

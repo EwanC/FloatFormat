@@ -1,6 +1,6 @@
-#include "FF.h"
 #include <iostream>
 #include <unordered_map>
+#include "FF.h"
 
 namespace {
 void printUsage() {
@@ -21,7 +21,7 @@ const std::unordered_map<std::string, ParseFunctorType> functor_map = {
 };
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   if (argc == 1) {
     printUsage();
     return -1;
