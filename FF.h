@@ -49,6 +49,10 @@ struct FloatInfo final {
 
   static const int exp_bias;
 
+  bool isDenorm() const;
+  bool isInf() const;
+  bool isNan() const;
+
  private:
   template <class X>
   friend std::ostream& operator<<(std::ostream&, const FloatInfo<X>&);
@@ -58,10 +62,6 @@ struct FloatInfo final {
     T hex;
   };
   union Converter hex_val;
-
-  bool isDenorm() const;
-  bool isInf() const;
-  bool isNan() const;
 
   T getSignBits() const {
     return (hex_val.hex & sign_mask) >> ((sizeof(T) * 8) - 1);

@@ -32,6 +32,12 @@ float convertHalfToFloat(FF::hex_half half) {
   using FI_H = FF::FloatInfo<FF::hex_half>;
   using FI_S = FF::FloatInfo<FF::hex_single>;
 
+  if (FI_H(half).isInf()) {
+    return INFINITY;
+  } else if (FI_H(half).isNan()) {
+    return NAN;
+  }
+
   const uint16_t abs_bits = ~FI_H::sign_mask & half;
   uint16_t exponent_bits = abs_bits >> FI_H::mantissa_bits;
   exponent_bits += FI_H::exp_bias;
@@ -123,13 +129,13 @@ bool FloatInfo<T>::isDenorm() const {
 
 template <class T>
 bool FloatInfo<T>::isInf() const {
-  return (hex_val.hex & ~FI<T>::sign_mask) == FI<T>::exp_mask;
+  return (hex_val.hex & ~FI<T>::sign_mask) == FI<T>::exponent_mask;
 }
 
 template <class T>
 bool FloatInfo<T>::isNan() const {
   return (hex_val.hex & FI<T>::mantissa_mask) &&
-         (hex_val.hex & FI<T>::exp_mask == FI<T>::exp_mask);
+         ((hex_val.hex & FI<T>::exponent_mask) == FI<T>::exponent_mask);
 }
 
 template <>
@@ -156,11 +162,29 @@ FloatInfo<hex_half>::FloatInfo(float single_precision) {
 
       constexpr const auto shift =
           FI<hex_single>::mantissa_bits - FI<hex_half>::mantissa_bits;
-      uint32_t mant_bits =
+      const uint32_t mant_bits =
           (single_bits & FI<hex_single>::mantissa_mask) >> shift;
+      hex_val.hex |= mant_bits;  // RTZ value
 
-      // TODO RTE rounding
-      hex_val.hex |= mant_bits;
+      /*
+         RTE Rounding - Round To Nearest Even
+         * If first lost mantissa bit from isn't set, round down towards zero.
+         * If first lost mantissa bit is set:
+            * If at least one other bit set, Round up
+            * If no other bits set -> then round to even:
+                * Even if first non-dropped bit is set, then we round up
+      */
+      constexpr const uint32_t MSB_dropped_bit = uint32_t(1) << (shift - 1);
+      const bool dropped_bit_set = 0 != (single_bits & MSB_dropped_bit);
+      if (dropped_bit_set) {
+        const bool RTE = 0 == (single_bits & (MSB_dropped_bit - 1));
+        if (!RTE) {
+          hex_val.hex++;  // Round away from zero
+        } else if ((mant_bits & 1) == 0) {
+          // lsb we're keeping is set, round up
+          hex_val.hex++;
+        }
+      }
     }
   }
 
@@ -186,6 +210,10 @@ std::ostream& operator<<(std::ostream& os, const FI<T>& fi) {
 
   if (fi.isDenorm()) {
     os << " denormal\n";
+  } else if (fi.isInf()) {
+    os << " infinity\n";
+  } else if (fi.isNan()) {
+    os << " NaN\n";
   } else {
     os << "\n";
   }
@@ -218,6 +246,7 @@ typename NativeFloat<T>::NativeType parseString(const std::string&& str) {
   if (isHex) {
     const T hex_value = static_cast<T>(std::strtoul(str.c_str(), 0, 16));
     native = Converter<T>::HexToFloat(hex_value);
+
   } else {
     try {
       native = static_cast<FloatType>(std::stod(str));
