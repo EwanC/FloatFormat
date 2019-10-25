@@ -5,7 +5,7 @@ Supports half, single, and double precision float point numbers.
 
 Author: Ewan Crawford <ewan.cr@gmail.com>
 
-[![Build Status](https://travis-ci.org/EwanC/FloatFormat.svg)](https://travis-ci.org/EwanC/FloatFormat) master
+[![Build Status](https://travis-ci.org/EwanC/FloatFormat.svg)](https://travis-ci.org/EwanC/FloatFormat) master branch
 
 ## Usage
 
@@ -24,7 +24,6 @@ Floats can be entered in hex integer, hex float, fixed point float, or scientifi
 * [ ] Testing
 * [ ] Denormal halfs
 * [ ] NAN, INF, 0
-* [ ] RTE rounding
 
 ## License
 

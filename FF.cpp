@@ -6,6 +6,59 @@
 #include <string>
 #include <type_traits>
 
+namespace FF {
+template <class T>
+using FI = FloatInfo<T>;
+
+// Half precision
+template <>
+const unsigned FI<hex_half>::mantissa_bits = 10;
+template <>
+const unsigned FI<hex_half>::exponent_bits = 5;
+template <>
+const unsigned FI<hex_half>::sign_shift = 15;
+template <>
+const uint16_t FI<hex_half>::mantissa_mask = 0x3FF;
+template <>
+const uint16_t FI<hex_half>::exponent_mask = 0x7C00;
+template <>
+const uint16_t FI<hex_half>::sign_mask = 0x8000;
+template <>
+const int FI<hex_half>::exp_bias = -15;
+
+// Single precision
+template <>
+const unsigned FI<hex_single>::mantissa_bits = 23;
+template <>
+const unsigned FI<hex_single>::exponent_bits = 8;
+template <>
+const unsigned FI<hex_single>::sign_shift = 31;
+template <>
+const uint32_t FI<hex_single>::mantissa_mask = 0x007fffff;
+template <>
+const uint32_t FI<hex_single>::exponent_mask = 0x7f800000;
+template <>
+const uint32_t FI<hex_single>::sign_mask = 0x80000000;
+template <>
+const int FI<hex_single>::exp_bias = -127;
+
+// Double precision
+template <>
+const unsigned FI<hex_double>::mantissa_bits = 52;
+template <>
+const unsigned FI<hex_double>::exponent_bits = 11;
+template <>
+const unsigned FI<hex_double>::sign_shift = 63;
+template <>
+const uint64_t FI<hex_double>::mantissa_mask = 0xfffffffffffff;
+template <>
+const uint64_t FI<hex_double>::exponent_mask = 0x7ff0000000000000;
+template <>
+const uint64_t FI<hex_double>::sign_mask = 0x8000000000000000;
+template <>
+const int FI<hex_double>::exp_bias = -1023;
+}
+
 namespace {
 template <typename U, typename T>
 inline U bitcast(const T in) {
@@ -72,54 +125,6 @@ struct Converter<FF::hex_half> final {
 namespace FF {
 template <class T>
 using FI = FloatInfo<T>;
-
-// Half precision
-template <>
-const unsigned FI<hex_half>::mantissa_bits = 10;
-template <>
-const unsigned FI<hex_half>::exponent_bits = 5;
-template <>
-const unsigned FI<hex_half>::sign_shift = 15;
-template <>
-const uint16_t FI<hex_half>::mantissa_mask = 0x3FF;
-template <>
-const uint16_t FI<hex_half>::exponent_mask = 0x7C00;
-template <>
-const uint16_t FI<hex_half>::sign_mask = 0x8000;
-template <>
-const int FI<hex_half>::exp_bias = -15;
-
-// Single precision
-template <>
-const unsigned FI<hex_single>::mantissa_bits = 23;
-template <>
-const unsigned FI<hex_single>::exponent_bits = 8;
-template <>
-const unsigned FI<hex_single>::sign_shift = 31;
-template <>
-const uint32_t FI<hex_single>::mantissa_mask = 0x007fffff;
-template <>
-const uint32_t FI<hex_single>::exponent_mask = 0x7f800000;
-template <>
-const uint32_t FI<hex_single>::sign_mask = 0x80000000;
-template <>
-const int FI<hex_single>::exp_bias = -127;
-
-// Double precision
-template <>
-const unsigned FI<hex_double>::mantissa_bits = 52;
-template <>
-const unsigned FI<hex_double>::exponent_bits = 11;
-template <>
-const unsigned FI<hex_double>::sign_shift = 63;
-template <>
-const uint64_t FI<hex_double>::mantissa_mask = 0xfffffffffffff;
-template <>
-const uint64_t FI<hex_double>::exponent_mask = 0x7ff0000000000000;
-template <>
-const uint64_t FI<hex_double>::sign_mask = 0x8000000000000000;
-template <>
-const int FI<hex_double>::exp_bias = -1023;
 
 template <class T>
 bool FloatInfo<T>::isDenorm() const {

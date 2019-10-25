@@ -9,7 +9,7 @@ addons:
     packages:
      llvm-10-tools
 
-compilers:
+compiler:
   - gcc
   - clang
 
