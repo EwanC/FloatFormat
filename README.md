@@ -22,8 +22,9 @@ Floats can be entered in hex integer, hex float, fixed point float, or scientifi
 ## TODO
 
 * [ ] Testing
+  - RTE
+  - Max/min limits
 * [ ] Denormal halfs
-* [ ] NAN, INF, 0
 
 ## License
 

@@ -1,0 +1,15 @@
+RUN: %ff -f 0xff800000 | FileCheck %s
+CHECK: 64-bit double precision infinity
+CHECK-NEXT: Hex: 0xfff0000000000000
+CHECK-NEXT: Bits: 1 11111111111 0000000000000000000000000000000000000000000000000000
+CHECK-NEXT: Float: -inf, -inf, -inf
+
+CHECK: 32-bit single precision infinity
+CHECK-NEXT: Hex: 0xff800000
+CHECK-NEXT: Bits: 1 11111111 00000000000000000000000
+CHECK-NEXT: Float: -inf, -inf, -inf
+
+CHECK: 16-bit half precision infinity
+CHECK-NEXT: Hex: 0xfc00
+CHECK-NEXT: Bits: 1 11111 0000000000
+CHECK-NEXT: Float: -inf, -inf, -inf

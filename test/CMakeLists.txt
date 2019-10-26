@@ -7,6 +7,35 @@ elseif (NOT FILECHECK)
     message(STATUS "Could not find FileCheck testing tool.")
 else()
 configure_file(lit.cfg.in lit.cfg @ONLY)
-set(LIT_SOURCES help.lit)
+set(LIT_SOURCES
+    help.lit
+    ELF_SO.lit
+    simple_half.lit
+    hex_simple_half.lit
+    hexf_simple_half.lit
+    sci_simple_half.lit
+    simple_float.lit
+    hex_simple_float.lit
+    hexf_simple_float.lit
+    sci_simple_float.lit
+    simple_double.lit
+    hex_simple_double.lit
+    hexf_simple_double.lit
+    sci_simple_double.lit
+    zero_half.lit
+    zero_float.lit
+    zero_double.lit
+    signed_zero_half.lit
+    signed_zero_float.lit
+    signed_zero_double.lit
+    inf_half.lit
+    inf_float.lit
+    inf_double.lit
+    signed_inf_half.lit
+    signed_inf_float.lit
+    signed_inf_double.lit
+    nan_half.lit
+    nan_float.lit
+    nan_double.lit)
 file(COPY ${LIT_SOURCES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()

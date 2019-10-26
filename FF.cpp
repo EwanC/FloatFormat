@@ -86,9 +86,14 @@ float convertHalfToFloat(FF::hex_half half) {
   using FI_S = FF::FloatInfo<FF::hex_single>;
 
   if (FI_H(half).isInf()) {
-    return INFINITY;
+    uint32_t bits = (FI_H::sign_mask & half) << 16;
+    bits |= FI_S::exponent_mask;
+    return bitcast<float>(bits);
   } else if (FI_H(half).isNan()) {
     return NAN;
+  } else if (FI_H(half).isZero()) {
+    const uint32_t bits = (FI_H::sign_mask & half) << 16;
+    return bitcast<float>(bits);
   }
 
   const uint16_t abs_bits = ~FI_H::sign_mask & half;
@@ -98,7 +103,7 @@ float convertHalfToFloat(FF::hex_half half) {
   uint32_t single_bits = (exponent_bits - FI_S::exp_bias)
                          << FI_S::mantissa_bits;
 
-  single_bits |= (FI_H::sign_mask & half) << 15;
+  single_bits |= (FI_H::sign_mask & half) << 16;
 
   single_bits |= (abs_bits & FI_H::mantissa_mask)
                  << (FI_S::mantissa_bits - FI_H::mantissa_bits);
@@ -141,6 +146,11 @@ template <class T>
 bool FloatInfo<T>::isNan() const {
   return (hex_val.hex & FI<T>::mantissa_mask) &&
          ((hex_val.hex & FI<T>::exponent_mask) == FI<T>::exponent_mask);
+}
+
+template <class T>
+bool FloatInfo<T>::isZero() const {
+  return (hex_val.hex == FI<T>::sign_mask) || (hex_val.hex == 0);
 }
 
 template <>

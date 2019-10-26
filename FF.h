@@ -52,6 +52,7 @@ struct FloatInfo final {
   bool isDenorm() const;
   bool isInf() const;
   bool isNan() const;
+  bool isZero() const;
 
  private:
   template <class X>
