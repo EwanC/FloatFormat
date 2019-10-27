@@ -11,14 +11,27 @@ set(LIT_SOURCES
     help.lit
     ELF_SO.lit
     simple_half.lit
+    max_half.lit
+    min_normal_half.lit
+    max_subnormal_half.lit
+    min_subnormal_half.lit
     hex_simple_half.lit
     hexf_simple_half.lit
     sci_simple_half.lit
+    round_down_half.lit
+    round_even_down_half.lit
+    round_even_up_half.lit
+    round_up_half.lit
     simple_float.lit
+    max_float.lit
+    min_float.lit
     hex_simple_float.lit
     hexf_simple_float.lit
     sci_simple_float.lit
+    round_float.lit
     simple_double.lit
+    max_double.lit
+    min_double.lit
     hex_simple_double.lit
     hexf_simple_double.lit
     sci_simple_double.lit

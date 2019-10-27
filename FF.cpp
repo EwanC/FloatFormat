@@ -195,7 +195,7 @@ FloatInfo<hex_half>::FloatInfo(float single_precision) {
         const bool RTE = 0 == (single_bits & (MSB_dropped_bit - 1));
         if (!RTE) {
           hex_val.hex++;  // Round away from zero
-        } else if ((mant_bits & 1) == 0) {
+        } else if (mant_bits & 1) {
           // lsb we're keeping is set, round up
           hex_val.hex++;
         }

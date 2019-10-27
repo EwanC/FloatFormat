@@ -21,10 +21,7 @@ Floats can be entered in hex integer, hex float, fixed point float, or scientifi
 
 ## TODO
 
-* [ ] Testing
-  - RTE
-  - Max/min limits
-* [ ] Denormal halfs
+* [ ] Implement denormal halfs & enable tests
 
 ## License
 
