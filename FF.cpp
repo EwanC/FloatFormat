@@ -97,16 +97,29 @@ float convertHalfToFloat(FF::hex_half half) {
   }
 
   const uint16_t abs_bits = ~FI_H::sign_mask & half;
+  uint16_t mantissa_bits = abs_bits & FI_H::mantissa_mask;
   uint16_t exponent_bits = abs_bits >> FI_H::mantissa_bits;
-  exponent_bits += FI_H::exp_bias;
 
-  uint32_t single_bits = (exponent_bits - FI_S::exp_bias)
-                         << FI_S::mantissa_bits;
+  constexpr int bias_diff = FI_H::exp_bias - FI_S::exp_bias;
+  const uint16_t exp_lsb = 1 << FI_H::mantissa_bits;
+  if (exponent_bits == 0) {
+    int16_t e = -1;
+    do {
+      e++;
+      mantissa_bits <<= 1;
+    } while ((mantissa_bits & exp_lsb) == 0);
+    mantissa_bits &= FI_H::mantissa_mask;
+    exponent_bits = bias_diff - e;
+  } else {
+    exponent_bits += bias_diff;
+  }
+
+  uint32_t single_bits = exponent_bits << FI_S::mantissa_bits;
 
   single_bits |= (FI_H::sign_mask & half) << 16;
 
-  single_bits |= (abs_bits & FI_H::mantissa_mask)
-                 << (FI_S::mantissa_bits - FI_H::mantissa_bits);
+  constexpr uint32_t mantissa_shift = FI_S::mantissa_bits - FI_H::mantissa_bits;
+  single_bits |= uint32_t(mantissa_bits) << mantissa_shift;
 
   return bitcast<float>(single_bits);
 }
@@ -155,20 +168,38 @@ bool FloatInfo<T>::isZero() const {
 
 template <>
 FloatInfo<hex_half>::FloatInfo(float single_precision) {
+  float single_abs = std::fabs(single_precision);
+  uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
   if (std::isinf(single_precision)) {
     hex_val.hex = FI<hex_half>::exponent_mask;
   } else if (std::isnan(single_precision)) {
     hex_val.hex = FI<hex_half>::exponent_mask | FI<hex_half>::mantissa_mask;
   } else {
-    float single_abs = std::fabs(single_precision);
-    if (single_abs > 65519.0f) {
-      // 65536 is max value half can hold, but RTE limit above
-      hex_val.hex = FI<hex_half>::exponent_mask;
-    } else if (single_abs < 5.960464477539063e-08f) {
-      // 2^-24
-      hex_val.hex = 0;
-    } else {
+    int exp_unbiased = std::ilogb(single_abs);
+    if (exp_unbiased < -14) {
       uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
+
+      constexpr const auto mant_shift =
+          FI<hex_single>::mantissa_bits - FI<hex_half>::mantissa_bits;
+      uint32_t mant_bits =
+          (single_bits & FI<hex_single>::mantissa_mask) >> mant_shift;
+
+      // Implicit dropped bit
+      mant_bits |= uint32_t(1) << FI<hex_half>::mantissa_bits;
+
+      // todo RTE rounding
+
+      const unsigned exp_shift = std::abs(exp_unbiased - FI<hex_half>::exp_bias) + 1;
+      if (exp_shift > FI<hex_half>::mantissa_bits) {
+        // 2^-24
+        hex_val.hex = 0;  // return
+      } else {
+        hex_val.hex = mant_bits >> exp_shift;
+      }
+    } else if (single_abs > 65519.0f) {
+      // 65504 is max value half can hold, but RTE limit 65519
+      hex_val.hex = FI<hex_half>::exponent_mask;
+    } else {
       uint32_t exponent_bits = (single_bits & FI<hex_single>::exponent_mask) >>
                                FI<hex_single>::mantissa_bits;
       exponent_bits += FI<hex_single>::exp_bias;
