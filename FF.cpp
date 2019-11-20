@@ -187,14 +187,24 @@ FloatInfo<hex_half>::FloatInfo(float single_precision) {
       // Implicit dropped bit
       mant_bits |= uint32_t(1) << FI<hex_half>::mantissa_bits;
 
-      // todo RTE rounding
-
-      const unsigned exp_shift = std::abs(exp_unbiased - FI<hex_half>::exp_bias) + 1;
+      const unsigned exp_shift =
+          std::abs(exp_unbiased - FI<hex_half>::exp_bias) + 1;
       if (exp_shift > FI<hex_half>::mantissa_bits) {
         // 2^-24
         hex_val.hex = 0;  // return
       } else {
         hex_val.hex = mant_bits >> exp_shift;
+        const uint32_t MSB_dropped_bit = uint32_t(1) << (exp_shift - 1);
+        const bool dropped_bit_set = 0 != (mant_bits & MSB_dropped_bit);
+        if (dropped_bit_set) {
+          const bool RTE = 0 == (mant_bits & (MSB_dropped_bit - 1));
+          if (!RTE) {
+            hex_val.hex++;  // Round away from zero
+          } else if (hex_val.hex & 1) {
+            // lsb we're keeping is set, round up
+            hex_val.hex++;
+          }
+        }
       }
     } else if (single_abs > 65519.0f) {
       // 65504 is max value half can hold, but RTE limit 65519

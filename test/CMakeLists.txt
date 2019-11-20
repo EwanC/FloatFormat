@@ -22,6 +22,7 @@ set(LIT_SOURCES
     round_even_down_half.lit
     round_even_up_half.lit
     round_up_half.lit
+    denorm_round_half.lit
     simple_float.lit
     max_float.lit
     min_float.lit
