@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     ParseFunctorType parser;
     try {
       parser = functor_map.at(arg);
-    } catch (std::out_of_range) {
+    } catch (std::out_of_range&) {
       std::cerr << "Unkown argument " << arg << "\n";
       return -1;
     }

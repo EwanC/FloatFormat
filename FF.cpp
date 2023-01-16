@@ -306,7 +306,7 @@ typename NativeFloat<T>::NativeType parseString(const std::string&& str) {
   } else {
     try {
       native = static_cast<FloatType>(std::stod(str));
-    } catch (std::invalid_argument) {
+    } catch (std::invalid_argument&) {
       std::cerr << "Invalid argument: " << str << "\n";
       return -1;
     }
