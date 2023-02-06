@@ -14,7 +14,8 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19) # 2017
    message(FATAL_ERROR "Compiler not supported")
  endif()
-elseif (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif (NOT CMAKE_CXX_COMPILER_ID STREQUAL Clang AND
+        NOT CMAKE_CXX_COMPILER_ID STREQUAL AppleClang)
  message(FATAL_ERROR "Unknown Compiler")
 endif()
 
