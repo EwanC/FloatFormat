@@ -1,8 +1,11 @@
 #include "FF.h"
+
 #include <bitset>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <type_traits>
 
@@ -75,9 +78,25 @@ inline U bitcast(const T in) {
 
 template <typename T>
 inline std::ostream& dumpFloat(std::ostream& os, T f) {
-  os << "Float: " << std::defaultfloat << f;
+  const auto default_precision{std::cout.precision()};
+  constexpr auto max_precision{std::numeric_limits<float>::digits10 + 1};
+
+  os << "Float: " << std::defaultfloat << std::setprecision(max_precision) << f;
   os << ", " << std::hexfloat << f;
   os << ", " << std::scientific << f;
+  os << std::defaultfloat << std::setprecision(default_precision);
+  return os;
+}
+
+template <>
+inline std::ostream& dumpFloat(std::ostream& os, double f) {
+  const auto default_precision{std::cout.precision()};
+  constexpr auto max_precision{std::numeric_limits<double>::digits10 + 1};
+
+  os << "Float: " << std::defaultfloat << std::setprecision(max_precision) << f;
+  os << ", " << std::hexfloat << f;
+  os << ", " << std::scientific << f;
+  os << std::defaultfloat << std::setprecision(default_precision);
   return os;
 }
 

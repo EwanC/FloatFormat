@@ -50,6 +50,7 @@ set(LIT_SOURCES
     signed_inf_double.lit
     nan_half.lit
     nan_float.lit
-    nan_double.lit)
+    nan_double.lit
+    repro_half_1.lit)
 file(COPY ${LIT_SOURCES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
