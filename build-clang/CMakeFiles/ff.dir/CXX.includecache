@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ewan/Development/codeplay/FloatFormat/FF.h
+cstdint
+-
+iosfwd
+-
+string
+-
+
+/home/ewan/Development/codeplay/FloatFormat/driver.cpp
+iostream
+-
+unordered_map
+-
+FF.h
+/home/ewan/Development/codeplay/FloatFormat/FF.h
+

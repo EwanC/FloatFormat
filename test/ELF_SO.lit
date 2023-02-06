@@ -1,3 +1,3 @@
 REQUIRES: linux
-RUN: ldd %ff | FileCheck %s
+RUN: ldd %ff | filecheck %s
 CHECK: libFloatFormat.so.1

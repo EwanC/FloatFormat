@@ -1,11 +1,12 @@
 find_program(LIT NAMES llvm-lit lit)
-find_program(FILECHECK NAMES FileCheck)
+find_program(FILECHECK NAMES filecheck)
 
 if (NOT LIT)
-    message(STATUS "Could not find lit testing tool.")
+    message(WARNING "Could not find lit testing tool.")
 elseif (NOT FILECHECK)
-    message(STATUS "Could not find FileCheck testing tool.")
-else()
+    message(WARNING "Could not find filecheck testing tool.")
+endif()
+
 configure_file(lit.cfg.in lit.cfg @ONLY)
 set(LIT_SOURCES
     help.lit
@@ -53,4 +54,3 @@ set(LIT_SOURCES
     nan_double.lit
     repro_half_1.lit)
 file(COPY ${LIT_SOURCES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()

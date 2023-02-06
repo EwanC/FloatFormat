@@ -1,4 +1,4 @@
-RUN: %ff --help | FileCheck %s
+RUN: %ff --help | filecheck %s
 CHECK: Usage: ff [-f <float> | -h <half> | -d <double>]
 CHECK-NEXT: Floats can be entered in hex integer, hex float, fixed point float, or scientific float formats
 CHECK-NEXT:    -h, --half   <half>     16-bit half precision

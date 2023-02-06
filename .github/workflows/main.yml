@@ -1,0 +1,21 @@
+name: Build and Test
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    build:
+        runs-on: ${{ matrix.os }}
+        continue-on-error: true
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+        steps:
+           - uses: actions/checkout@v3
+           - run: pip3 install lit filecheck
+           - run: cmake -S . -B build
+           - run: cmake --build build
+           - run: lit build/test -v
+

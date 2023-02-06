@@ -1,4 +1,4 @@
-RUN: %ff -h 0x0 | FileCheck %s
+RUN: %ff -h 0x0 | filecheck %s
 CHECK: 64-bit double precision
 CHECK-NEXT: Hex: 0x0
 CHECK-NEXT: Bits: 0 00000000000 0000000000000000000000000000000000000000000000000000

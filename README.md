@@ -5,7 +5,7 @@ Supports half, single, and double precision float point numbers.
 
 Author: Ewan Crawford <ewan.cr@gmail.com>
 
-[![Build Status](https://travis-ci.org/EwanC/FloatFormat.svg)](https://travis-ci.org/EwanC/FloatFormat) master branch
+![Main workflow status](https://github.com/EwanC/FloatFormat/actions/workflows/main.yml/badge.svg)
 
 ## Usage
 
@@ -18,10 +18,6 @@ Floats can be entered in hex integer, hex float, fixed point float, or scientifi
     -d, --double <double>   64-bit double precision
     --help                  Displays this message and exi
 ```
-
-## TODO
-
-* [ ] Implement denormal halfs & enable tests
 
 ## License
 

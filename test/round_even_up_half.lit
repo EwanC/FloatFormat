@@ -1,4 +1,4 @@
-RUN: %ff -f 32816 | FileCheck %s
+RUN: %ff -f 32816 | filecheck %s
 
 CHECK: 64-bit double precision
 CHECK-NEXT: Hex: 0x40e0060000000000

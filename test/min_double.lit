@@ -1,4 +1,4 @@
-RUN: %ff -d 0x1 | FileCheck %s
+RUN: %ff -d 0x1 | filecheck %s
 
 CHECK: 64-bit double precision denormal
 CHECK-NEXT: Hex: 0x1

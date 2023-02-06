@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ewan/Development/codeplay/FloatFormat/FF.cpp
+FF.h
+/home/ewan/Development/codeplay/FloatFormat/FF.h
+bitset
+-
+cmath
+-
+cstring
+-
+iomanip
+-
+iostream
+-
+limits
+-
+string
+-
+type_traits
+-
+
+/home/ewan/Development/codeplay/FloatFormat/FF.h
+cstdint
+-
+iosfwd
+-
+string
+-
+
