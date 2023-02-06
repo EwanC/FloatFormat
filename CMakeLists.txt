@@ -22,8 +22,8 @@ endif()
 add_library(FloatFormat SHARED FF.cpp)
 set_target_properties(FloatFormat PROPERTIES VERSION 1.0 SOVERSION 1)
 target_compile_options(FloatFormat PUBLIC
-            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Werror -Wall -Wextra>
-            $<$<CXX_COMPILER_ID:MSVC>:/Wall /WX>)
+            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:-Werror -Wall -Wextra>)
+            # $<$<CXX_COMPILER_ID:MSVC>:/Wall /WX>)
 
 
 add_executable(ff driver.cpp)

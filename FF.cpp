@@ -188,7 +188,7 @@ bool FloatInfo<T>::isZero() const {
 template <>
 FloatInfo<hex_half>::FloatInfo(float single_precision) {
   float single_abs = std::fabs(single_precision);
-  uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
+  const uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
   if (std::isinf(single_precision)) {
     hex_val.hex = FI<hex_half>::exponent_mask;
   } else if (std::isnan(single_precision)) {
@@ -196,8 +196,6 @@ FloatInfo<hex_half>::FloatInfo(float single_precision) {
   } else {
     int exp_unbiased = std::ilogb(single_abs);
     if (exp_unbiased < -14) {
-      uint32_t single_bits = *reinterpret_cast<uint32_t*>(&single_abs);
-
       constexpr const auto mant_shift =
           FI<hex_single>::mantissa_bits - FI<hex_half>::mantissa_bits;
       uint32_t mant_bits =
