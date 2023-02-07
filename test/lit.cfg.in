@@ -4,7 +4,10 @@ config.name = "FloatFormat test suite"
 config.test_format = lit.formats.ShTest("0")
 config.suffixes = [".lit"]
 
-if "@UNIX@" in {"True", 1, "ON"}:
-  config.available_features="linux"
+if "@UNIX@" in {"True", "1", "ON"} and not "@APPLE@":
+  config.available_features.add("linux")
 
-config.substitutions.append(("%ff", "@PROJECT_BINARY_DIR@/ff"))
+if "@WIN32@" in {"True", "1", "ON"}:
+  config.substitutions.append(("%ff", "@PROJECT_BINARY_DIR@/ff.exe"))
+else:
+  config.substitutions.append(("%ff", "@PROJECT_BINARY_DIR@/ff"))
